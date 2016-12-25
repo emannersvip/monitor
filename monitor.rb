@@ -45,7 +45,7 @@ if File.size("test.db") == 0
   #http://sqlite.org/autoinc.html
   rows = db.execute <<-SQL
     create table hosts (
-      id rowid,
+      id integer primary key autoincrement,
       name varchar(64)
     );
   SQL
@@ -60,8 +60,10 @@ if ARGV[0] == "host"
     end
   elsif ARGV[1] == "add"
     puts "Adding new host"
-    db.execute("INSERT INTO hosts (id, name)
-                VALUES (?, ?)", [1, ARGV[2]])
+    #db.execute("INSERT INTO hosts (id, name)
+    #            VALUES (?, ?)", [1, ARGV[2]])
+    db.execute("INSERT INTO hosts (name)
+                VALUES (?)", [ARGV[2]])
   end
 end
 

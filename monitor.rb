@@ -26,9 +26,9 @@ if preparser.help?
   puts "monitor host list\n\n"
 end
 
-if preparser.host?
-  puts "2014 Comprehensive Simple Monitor"
-end
+#if preparser.host?
+#  puts "2014 Comprehensive Simple Monitor"
+#end
 
 #if ARGV[0] == "host"
 #  puts "2014 Comprehensive Simple Monitor"
@@ -37,13 +37,33 @@ end
 #Open a new Datebase
 db = SQLite3::Database.new "test.db"
 
-#Create a database
-#rows = db.execute <<-SQL
-#  create table numbers (
-#    name varchar(30),
-#    val int
-#  );
-#SQL
+#File.zero?("test.rb")
+if File.size("test.db") == 0
+  puts "Make new tables"
+  
+  #Create a database
+  #http://sqlite.org/autoinc.html
+  rows = db.execute <<-SQL
+    create table hosts (
+      id rowid,
+      name varchar(64)
+    );
+  SQL
+end
+
+if ARGV[0] == "host"
+  puts "Configuring Host"
+  if ARGV[1] == "list"
+    puts "Printing host list"
+    db.execute("select * from hosts") do |row|
+      p row
+    end
+  elsif ARGV[1] == "add"
+    puts "Adding new host"
+    db.execute("INSERT INTO hosts (id, name)
+                VALUES (?, ?)", [1, ARGV[2]])
+  end
+end
 
 #puts #{verbose}
 #puts verbose

@@ -46,7 +46,8 @@ if File.size("test.db") == 0
   rows = db.execute <<-SQL
     create table hosts (
       id integer primary key autoincrement,
-      name varchar(64)
+      name varchar(64),
+      ip varchar(16)
     );
   SQL
 end
@@ -58,12 +59,17 @@ if ARGV[0] == "host"
     db.execute("select * from hosts") do |row|
       p row
     end
+  #Neds input cleaning
   elsif ARGV[1] == "add"
     puts "Adding new host"
-    #db.execute("INSERT INTO hosts (id, name)
-    #            VALUES (?, ?)", [1, ARGV[2]])
-    db.execute("INSERT INTO hosts (name)
-                VALUES (?)", [ARGV[2]])
+    db.execute("INSERT INTO hosts (name,ip)
+                VALUES (?, ?)", [ARGV[2], ARGV[3]])
+  #Neds input cleaning
+  elsif ARGV[1] == "remove"
+    puts "Removing host"
+#add check for IP or Name (regex)
+    #db.execute("DELETE from hosts where name = #{ARGV[2]}")
+    db.execute("DELETE from hosts where id = #{ARGV[2]}")
   end
 end
 

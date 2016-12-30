@@ -2,6 +2,9 @@
 
 require 'clamp'
 require 'sqlite3'
+#http://stackoverflow.com/questions/1050749/including-a-ruby-class-from-a-separate-file
+require_relative 'lib/host'
+#require 'lib/host'
 
 class PreParser < Clamp::Command
   option ["-h", "--help"], :flag, "be helpful"
@@ -53,7 +56,9 @@ if File.size("test.db") == 0
 end
 
 if ARGV[0] == "host"
+  #Create host object for the future
   puts "Configuring Host"
+
   if ARGV[1] == "list"
     puts "Printing host list"
     db.execute("select * from hosts") do |row|
@@ -62,6 +67,8 @@ if ARGV[0] == "host"
   #Neds input cleaning
   elsif ARGV[1] == "add"
     puts "Adding new host"
+    mon_host = Host.new(ARGV[2], ARGV[3])
+
     db.execute("INSERT INTO hosts (name,ip)
                 VALUES (?, ?)", [ARGV[2], ARGV[3]])
   #Neds input cleaning
@@ -70,8 +77,17 @@ if ARGV[0] == "host"
 #add check for IP or Name (regex)
     #db.execute("DELETE from hosts where name = #{ARGV[2]}")
     db.execute("DELETE from hosts where id = #{ARGV[2]}")
+  elsif ARGV[1] == "info"
+    puts "Printing host monitor info"
+    #add check for IP or Name (regex)
+    #db.execute("DELETE from hosts where name = #{ARGV[2]}")
+    #db.execute("DELETE from hosts where id = #{ARGV[2]}")
   end
 end
 
-#puts #{verbose}
-#puts verbose
+def check_connectivity
+  db.execute("select * from hosts") do |row|
+  end
+end
+
+

@@ -29,15 +29,30 @@ if preparser.help?
   puts "monitor host info <host/ip>\n\n"
 end
 
-#Open a new Datebase
-db = SQLite3::Database.new "test.db"
+#Open host Database readonly
+monitordb = SQLite3::Database.new "test.db"
+#monitordb = SQLite3::Database.new "monitor.db"
+#Open alerts Database 
+alertsdb = SQLite3::Database.new "alerts.db"
 
-#File.zero?("test.rb")
+if File.size("alerts.db") == 0
+  puts "Make Alerts DataBase"
+
+  rows = alertsdb.execute <<-SQL
+    create table hosts (
+      id integer primary key autoincrement,
+      name varchar(64),
+      ip varchar(16),
+      status integer
+    );
+  SQL
+end
+
 if File.size("test.db") == 0
   puts "Aborting you need to add new hosts"
 end
 
-db.execute( "select ip from hosts" ) do |row|
+monitordb.execute( "select ip from hosts" ) do |row|
   #p row
   puts "Host #{row[0]} is online" if online?(row[0])
   puts "Host #{row[0]} is offline" if !online?(row[0])

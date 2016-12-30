@@ -11,6 +11,12 @@ class PreParser < Clamp::Command
   parameter "HOST", "Target host"
 end
 
+#Test for host connectivity using ICMP PING
+def online?(host)
+  check = Net::Ping::External.new(host)
+  check.ping?
+end
+
 
 preparser = PreParser.new File.basename($0), {}
 begin
@@ -32,13 +38,9 @@ if File.size("test.db") == 0
 end
 
 db.execute( "select ip from hosts" ) do |row|
-  p row
+  #p row
+  puts "Host #{row[0]} is online" if online?(row[0])
+  puts "Host #{row[0]} is offline" if !online?(row[0])
 end
-
-
-#def check_connectivity
-#  db.execute("select * from hosts") do |row|
-#  end
-#end
 
 

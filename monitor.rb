@@ -83,6 +83,8 @@ if ARGV[0] == "host"
     #db.execute("DELETE from hosts where name = #{ARGV[2]}")
     #db.execute("DELETE from hosts where id = #{ARGV[2]}")
   end
+  else
+    puts "Bad command"
 end
 
 def check_connectivity

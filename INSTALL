@@ -1,11 +1,11 @@
 
 
-
 #
 
-sudo gem install sqlite3
+sudo apt-get install ruby-dev libsqlite3-dev ; sudo gem install sqlite3
 sudo gem install clamp
-sudo gem install net-ping
 sudo gem install colorize
+sudo apt-get install nmap ; sudo gem install netaddr
+sudo gem install net-ping
 
 

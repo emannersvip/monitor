@@ -70,7 +70,20 @@ if ARGV[0] == "host"
 
     monitordb.execute("INSERT INTO hosts (name,ip)
                 VALUES (?, ?)", [ARGV[2], ARGV[3]])
-  #Neds input cleaning
+  #Needs input cleaning
+  elsif ARGV[1] == "discover"
+    puts "Discovering new hosts"
+    discovered_ips = `/usr/bin/ruby lib/discover.rb`.split("\n")
+
+    discovered_ips.each do |ip|
+      #[1..-1] removes first char from string
+      #chop removes last char from string
+      #puts ip.split("_")[0]+"----"+ip.split("_")[1][1..-1].chop
+#--This insert needs to be in a function
+#--This needs to first check that thes hosts dont already exist, maybe make the IP column inthe DB unique
+      monitordb.execute("INSERT INTO hosts (name,ip)
+                         VALUES (?, ?)", [ip.split("_")[0], ip.split("_")[1][1..-1].chop])
+    end
   elsif ARGV[1] == "remove"
     puts "Removing host"
 #add check for IP or Name (regex)

@@ -1,8 +1,9 @@
 #!/usr/bin/ruby
 
 require 'clamp'
-require 'sqlite3'
+require 'colorize'
 require 'net/ping'
+require_relative 'lib/db'
 
 class PreParser < Clamp::Command
   option ["-h", "--help"], :flag, "be helpful"
@@ -17,7 +18,14 @@ def online?(host)
   check.ping?
 end
 
+#Update entry in alerts DB
+def update(host,ip,status)
+  alertsdb = SQLite3::Database.new "alerts.db"
+  alertsdb.execute("INSERT into alerts (name,ip,status)
+                    VALUES (?, ?, ?)", [host, ip, status])
+end
 
+#---Main beigns--------------------------------------------
 preparser = PreParser.new File.basename($0), {}
 begin
   preparser.parse ARGV
@@ -29,33 +37,24 @@ if preparser.help?
   puts "monitor host info <host/ip>\n\n"
 end
 
-#Open host Database readonly
-monitordb = SQLite3::Database.new "test.db"
-#monitordb = SQLite3::Database.new "monitor.db"
-#Open alerts Database 
-alertsdb = SQLite3::Database.new "alerts.db"
-
-if File.size("alerts.db") == 0
-  puts "Make Alerts DataBase"
-
-  rows = alertsdb.execute <<-SQL
-    create table hosts (
-      id integer primary key autoincrement,
-      name varchar(64),
-      ip varchar(16),
-      status integer
-    );
-  SQL
-end
-
-if File.size("test.db") == 0
+if File.size("monitor.db") == 0
   puts "Aborting you need to add new hosts"
 end
 
-monitordb.execute( "select ip from hosts" ) do |row|
+#Open MonitorDB
+monitordb = SQLite3::Database.new "monitor.db"
+monitordb.execute( "select name,ip from hosts" ) do |row|
   #p row
-  puts "Host #{row[0]} is online" if online?(row[0])
-  puts "Host #{row[0]} is offline" if !online?(row[0])
+  #puts "Host #{row[0]} is online" if online?(row[0])
+  #puts "Host #{row[0]} is offline" if !online?(row[0])
+  #
+  if online?(row[1])
+    puts "Host #{row[0]} (#{row[1]}) is online"
+    update(row[0], row[1], 1)
+  else
+    puts "Host #{row[0]} (#{row[1]}) is offline"
+    update(row[0], row[1], 0)
+  end
 end
 
 

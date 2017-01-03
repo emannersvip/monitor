@@ -6,5 +6,6 @@
 sudo gem install sqlite3
 sudo gem install clamp
 sudo gem install net-ping
+sudo gem install colorize
 
 

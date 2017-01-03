@@ -1,10 +1,13 @@
 #!/usr/bin/ruby
 
 require 'clamp'
-require 'sqlite3'
+#https://github.com/fazibear/colorize/blob/master/README.md
+#Magenta, Cyan, RGYB, White , Black
+require 'colorize'
 #http://stackoverflow.com/questions/1050749/including-a-ruby-class-from-a-separate-file
+require 'net/ping'
 require_relative 'lib/host'
-#require 'lib/host'
+require_relative 'lib/db'
 
 class PreParser < Clamp::Command
   option ["-h", "--help"], :flag, "be helpful"
@@ -13,6 +16,16 @@ class PreParser < Clamp::Command
   parameter "HOST", "Target host"
 end
 
+def print_host_list()
+  monitordb = SQLite3::Database.new "monitor.db"
+  puts "Printing host list"
+  monitordb.execute("select * from hosts") do |row|
+  #TODO add colors
+    p row
+  end
+end
+
+#TODO a subnet discover using discover.rb class
 
 preparser = PreParser.new File.basename($0), {}
 begin
@@ -25,8 +38,12 @@ end
 #end
 
 if preparser.help?
-  puts "2017 Comprehensive Simple Monitor"
-  puts "monitor host list\n\n"
+  #puts String.colors
+  puts "2017 Comprehensive Simple Monitor".green
+  #puts "monitor".colorize(:color => :light_blue, :background => :red) + "host list\n\n"
+  #puts "monitor ".colorize(:color => :light_black) + "host list\n\n"
+  puts "monitor ".colorize(:color => :magenta) + "host list\n\n"
+  exit
 end
 
 #if preparser.host?
@@ -38,57 +55,39 @@ end
 #end
 
 #Open a new Datebase
-db = SQLite3::Database.new "test.db"
-
-#File.zero?("test.rb")
-if File.size("test.db") == 0
-  puts "Make new tables"
-  
-  #Create a database
-  #http://sqlite.org/autoinc.html
-  rows = db.execute <<-SQL
-    create table hosts (
-      id integer primary key autoincrement,
-      name varchar(64),
-      ip varchar(16)
-    );
-  SQL
-end
+monitordb = SQLite3::Database.new "monitor.db"
 
 if ARGV[0] == "host"
   #Create host object for the future
   puts "Configuring Host"
 
   if ARGV[1] == "list"
-    puts "Printing host list"
-    db.execute("select * from hosts") do |row|
-      p row
-    end
+    print_host_list()
   #Neds input cleaning
   elsif ARGV[1] == "add"
     puts "Adding new host"
     mon_host = Host.new(ARGV[2], ARGV[3])
 
-    db.execute("INSERT INTO hosts (name,ip)
+    monitordb.execute("INSERT INTO hosts (name,ip)
                 VALUES (?, ?)", [ARGV[2], ARGV[3]])
   #Neds input cleaning
   elsif ARGV[1] == "remove"
     puts "Removing host"
 #add check for IP or Name (regex)
     #db.execute("DELETE from hosts where name = #{ARGV[2]}")
-    db.execute("DELETE from hosts where id = #{ARGV[2]}")
+    monitordb.execute("DELETE from hosts where id = #{ARGV[2]}")
   elsif ARGV[1] == "info"
     puts "Printing host monitor info"
     #add check for IP or Name (regex)
-    #db.execute("DELETE from hosts where name = #{ARGV[2]}")
-    #db.execute("DELETE from hosts where id = #{ARGV[2]}")
+    alertsdb = SQLite3::Database.new "alerts.db"
+    alertsdb.execute("SELECT * from alerts where name = #{ARGV[2]}")
   end
   else
     puts "Bad command"
 end
 
 def check_connectivity
-  db.execute("select * from hosts") do |row|
+  monitordb.execute("select * from hosts") do |row|
   end
 end
 

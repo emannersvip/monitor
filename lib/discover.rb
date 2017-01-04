@@ -22,8 +22,10 @@ end
 
 #https://github.com/pentestgeek/scripts/wiki/pingsweep.rb
 #puts "#{ENV['PWD']}"
-`./lib/pingsweep.rb ./lib/subnets.txt`
-$?.exitstatus => return error code
+if `./lib/pingsweep.rb ./lib/subnets.txt`.include? "No live hosts in network"
+    puts "Pingsweep failed to find any live hosts. Exiting..."
+    exit 1
+end
 
 #Check if the hosts directory was successfully created
 #http://stackoverflow.com/questions/4897568/how-to-check-if-a-directory-file-symlink-exists-with-one-command
@@ -32,8 +34,8 @@ if File.directory?(hosts_dir)
   begin
     f = File.open("hosts/#{discover_subnet}_hosts.txt")
   rescue Errno::ENOENT
-    puts "Pingsweep failed to run or find hosts. Exiting..."
-    exit
+    puts "Pingsweep failed to run or find hosts. (We should never be here) Exiting..."
+    exit 1
   end
     f.each do |ip|
     #https://ruby-doc.org/stdlib-1.9.2/libdoc/resolv/rdoc/Resolv.html

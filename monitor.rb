@@ -75,8 +75,16 @@ if ARGV[0] == "host"
     puts "Discovering new hosts"
     if ARGV[2] == nil
       discovered_ips = `/usr/bin/ruby lib/discover.rb`.split("\n")
+      if $?.exitstatus == 1
+        puts "Nothing Discovered"
+        exit
+      end
     else
       discovered_ips = `/usr/bin/ruby lib/discover.rb #{ARGV[2]}`.split("\n")
+      if $?.exitstatus == 1
+        puts "Nothing Discovered"
+        exit
+      end
     end
 
     discovered_ips.each do |ip|

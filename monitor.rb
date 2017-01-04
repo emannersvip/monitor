@@ -73,7 +73,11 @@ if ARGV[0] == "host"
   #Needs input cleaning
   elsif ARGV[1] == "discover"
     puts "Discovering new hosts"
-    discovered_ips = `/usr/bin/ruby lib/discover.rb`.split("\n")
+    if ARGV[2] == nil
+      discovered_ips = `/usr/bin/ruby lib/discover.rb`.split("\n")
+    else
+      discovered_ips = `/usr/bin/ruby lib/discover.rb #{ARGV[2]}`.split("\n")
+    end
 
     discovered_ips.each do |ip|
       #[1..-1] removes first char from string

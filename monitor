@@ -25,7 +25,14 @@ def print_host_list()
   end
 end
 
-#TODO a subnet discover using discover.rb class
+def print_monitor_list()
+  monitordb = SQLite3::Database.new "alerts.db"
+  puts "Printing monitor list"
+  monitordb.execute("select * from alerts") do |row|
+  #TODO add colors
+    p row
+  end
+end
 
 preparser = PreParser.new File.basename($0), {}
 begin
@@ -47,10 +54,6 @@ if preparser.help?
 end
 
 #if preparser.host?
-#  puts "2014 Comprehensive Simple Monitor"
-#end
-
-#if ARGV[0] == "host"
 #  puts "2014 Comprehensive Simple Monitor"
 #end
 
@@ -106,9 +109,15 @@ if ARGV[0] == "host"
     #add check for IP or Name (regex)
     alertsdb = SQLite3::Database.new "alerts.db"
     alertsdb.execute("SELECT * from alerts where name = #{ARGV[2]}")
-  end
   else
-    puts "Bad command"
+    puts "Bad host command"
+  end
+elsif ARGV[0] == "monitor"
+  if ARGV[1] == "list"
+    print_monitor_list()
+  else
+    puts "Bad monitor command"
+  end
 end
 
 def check_connectivity

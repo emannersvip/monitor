@@ -6,6 +6,7 @@ require 'clamp'
 require 'colorize'
 #http://stackoverflow.com/questions/1050749/including-a-ruby-class-from-a-separate-file
 require 'net/ping'
+require 'resolv'
 require_relative 'lib/host'
 require_relative 'lib/db'
 
@@ -32,6 +33,70 @@ def print_monitor_list()
   #TODO add colors
     p row
   end
+end
+
+def add_hosts(commands)
+  monitordb = SQLite3::Database.new "monitor.db"
+  puts "Adding new host"
+
+  if commands.length >= 3
+    #Check the first argument after 'add'
+    if commands[2] == "help"
+      puts "monitor host add <name> [ip]"
+      puts "monitor host add hpc-3-3"
+      puts "monitor host add hpc-3-3 10.0.3.3"
+      puts "monitor host add hpc-3-[1..30].local"
+      puts "monitor host add 10.0.3.[1..30]\n\n"
+    else
+      #Check whether this is a range of hosts or an individual host
+      if commands[2].include? "["
+        #Split on [X..Y]
+        host_prefix = commands[2].split("[")[0]
+        host_suffix = commands[2].split("[")[1]
+        range = host_suffix.split("]")[0]
+        host_suffix = host_suffix.split("]")[1]
+        #puts host_prefix
+        #puts host_suffix
+        #puts range
+        low_end = range.split("..")[0]
+        high_end = range.split("..")[1]
+
+        #Now that we have all needed numbers lets populate the hosts
+        #http://stackoverflow.com/questions/2032875/syntax-for-a-for-loop-in-ruby
+        for counter in low_end..high_end
+          name = host_prefix + counter + host_suffix
+          begin
+            ip = Resolv.getaddress name.chomp
+            puts ip.chomp+"_(#{name})"
+          rescue Errno::EINVAL
+            ip = '0.0.0.'+counter
+            puts ip.chomp+"_(#{name})"
+          end
+          #Add hosts to the DB
+          monitordb.execute("INSERT INTO hosts (name,ip)
+                             VALUES (?, ?)", [name, ip])
+        end
+      else
+        name = commands[2]
+        #if defined? commands[3]
+        if commands[3] != nil
+          ip = commands[3]
+          puts ip.chomp+"_(#{name})"
+        else
+          begin
+            ip = Resolv.getaddress name.chomp
+            puts ip.chomp+"_(#{name})"
+          rescue Errno::EINVAL
+            ip = '0.0.0.0'
+            puts ip.chomp+"_(#{name})"
+          end
+        end
+        monitordb.execute("INSERT INTO hosts (name,ip)
+                           VALUES (?, ?)", [name, ip])
+      end
+    end
+  end
+  #Needs input cleaning
 end
 
 preparser = PreParser.new File.basename($0), {}
@@ -68,12 +133,7 @@ if ARGV[0] == "host"
     print_host_list()
   #Neds input cleaning
   elsif ARGV[1] == "add"
-    puts "Adding new host"
-    mon_host = Host.new(ARGV[2], ARGV[3])
-
-    monitordb.execute("INSERT INTO hosts (name,ip)
-                VALUES (?, ?)", [ARGV[2], ARGV[3]])
-  #Needs input cleaning
+    add_hosts(ARGV)
   elsif ARGV[1] == "discover"
     puts "Discovering new hosts"
     if ARGV[2] == nil

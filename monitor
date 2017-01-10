@@ -41,7 +41,7 @@ def add_hosts(commands)
 
   if commands.length >= 3
     #Check the first argument after 'add'
-    if commands[2] == "help"
+    if commands[2] == "help" or commands[2] == "help"
       puts "monitor host add <name> [ip]"
       puts "monitor host add hpc-3-3"
       puts "monitor host add hpc-3-3 10.0.3.3"

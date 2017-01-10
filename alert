@@ -49,10 +49,10 @@ monitordb.execute( "select name,ip from hosts" ) do |row|
   #puts "Host #{row[0]} is offline" if !online?(row[0])
   #
   if online?(row[1])
-    puts "Host #{row[0]} (#{row[1]}) is online"
+    puts "Host #{row[0]} (#{row[1]}) is "+"online".green
     update(row[0], row[1], 1)
   else
-    puts "Host #{row[0]} (#{row[1]}) is offline"
+    puts "Host #{row[0]} (#{row[1]}) is "+"offline".red
     update(row[0], row[1], 0)
   end
 end

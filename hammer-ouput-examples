@@ -1,0 +1,72 @@
+[root@katello emanners]# hammer subnet list
+---|------------------------------|---------------|----------------
+ID | NAME                         | NETWORK       | MASK
+---|------------------------------|---------------|----------------
+21 | Lustre IB                    | 10.144.60.0   | 255.255.254.0
+29 | Dirac C8b                    | 10.180.23.0   | 255.255.255.0
+28 | Dirac C8t                    | 10.180.24.0   | 255.255.255.0
+18 | Dirac C9                     | 10.180.25.0   | 255.255.255.0
+30 | Dirac F19                    | 10.180.32.0   | 255.255.255.0
+34 | Daric F20                    | 10.180.33.0   | 255.255.255.0
+5  | Dirac H5                     | 10.180.40.0   | 255.255.255.0
+6  | Dirac H6                     | 10.180.41.0   | 255.255.255.0
+7  | Dirac H7                     | 10.180.42.0   | 255.255.255.0
+8  | Dirac H8                     | 10.180.43.0   | 255.255.255.0
+9  | Dirac H9                     | 10.180.44.0   | 255.255.255.0
+10 | Dirac H10                    | 10.180.45.0   | 255.255.255.0
+2  | Dirac A23                    | 10.180.51.0   | 255.255.255.0
+3  | Dirac C23                    | 10.180.53.0   | 255.255.255.0
+4  | Dirac D23                    | 10.180.54.0   | 255.255.255.0
+32 | Dirac E23                    | 10.180.55.0   | 255.255.255.0
+1  | Dirac Administrative         | 10.180.100.0  | 255.255.255.0
+11 | Dirac Desktops               | 144.174.35.0  | 255.255.255.0
+25 | Dirac Lab                    | 144.174.36.0  | 255.255.255.0
+24 | Dirac RCC Lab                | 144.174.36.0  | 255.255.255.0
+31 | Dirac RCC Misc Purchases     | 144.174.37.0  | 255.255.255.0
+12 | Dirac Administrative Public  | 144.174.40.0  | 255.255.255.0
+17 | Dirac Spear                  | 144.174.42.0  | 255.255.255.0
+26 | Dirac Storage                | 144.174.43.0  | 255.255.255.0
+19 | oVirt Tenants                | 144.174.54.0  | 255.255.254.0
+35 | Dirac FastLane               | 144.174.96.0  | 255.255.0.0
+33 | Sliger Administrative Public | 144.174.80.64 | 255.255.255.224
+27 | Sliger Cluster               | 10.175.0.0    | 255.255.0.0
+22 | Sliger Internal              | 10.175.0.0    | 255.255.0.0
+23 | Spear and Lustre Local       | 10.177.0.0    | 255.255.0.0
+---|------------------------------|---------------|----------------
+[root@katello emanners]# hammer organization list
+---|----------------------|----------------------|------------
+ID | NAME                 | LABEL                | DESCRIPTION
+---|----------------------|----------------------|------------
+7  | Default_Organization | Default_Organization |
+4  | RCC                  | RCC                  |
+---|----------------------|----------------------|------------
+[root@katello emanners]#
+[root@katello emanners]#
+[root@katello emanners]# hammer hostgroup list
+---|------------------------|-------------------------------------|------------------|-------------|------
+ID | NAME                   | TITLE                               | OPERATING SYSTEM | ENVIRONMENT | MODEL
+---|------------------------|-------------------------------------|------------------|-------------|------
+11 | Administrative Servers | Administrative Servers              |                  | production  |
+19 | DNS Servers            | Administrative Servers/DNS Servers  |                  |             |
+27 | ExportServer           | Administrative Servers/ExportServer |                  |             |
+18 | Globus Nodes           | Administrative Servers/Globus Nodes | CentOS 7.1       | production  |
+26 | LDAP                   | Administrative Servers/LDAP         |                  |             |
+9  | Base Node              | Base Node                           |                  | production  |
+6  | Compute Nodes          | Base Node/Compute Nodes             | CentOS 7.1       | production  |
+20 | GPU                    | Base Node/Compute Nodes/GPU         |                  |             |
+15 | No IB                  | Base Node/Compute Nodes/No IB       | CentOS 7.1       | production  |
+10 | Login Nodes            | Base Node/Login Nodes               | CentOS 7.1       | production  |
+12 | Spear Nodes            | Base Node/Spear Nodes               | CentOS 7.1       | production  |
+23 | GPGPU                  | Base Node/Spear Nodes/GPGPU         |                  |             |
+22 | Medicine               | Base Node/Spear Nodes/Medicine      |                  |             |
+21 | Narcis                 | Base Node/Spear Nodes/Narcis        |                  |             |
+7  | Build                  | Build                               | CentOS 7.1       | production  |
+24 | Desktops               | Desktops                            | CentOS 7.1       | production  |
+16 | Export Nodes           | Export Nodes                        | CentOS 7.1       | production  |
+28 | Lustre                 | Lustre                              | CentOS 7.2       | production  |
+25 | Openstack              | Openstack                           | RedHat 7.2       | production  |
+13 | oVirt1435Compute       | oVirt1435Compute                    | RedHat 7.2       | production  |
+30 | oVirtCompute           | oVirtCompute                        | CentOS 7.2       | production  |
+29 | oVirtStorage           | oVirtStorage                        | CentOS 7.2       | production  |
+17 | oVirtTenant            | oVirtTenant                         | CentOS 7.2       | production  |
+---|------------------------|-------------------------------------|------------------|-------------|------
